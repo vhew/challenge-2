@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/challenge-2-backend"
+]
+resolver = "2"
