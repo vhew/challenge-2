@@ -52,17 +52,39 @@ function Page() {
   const isPolling = isPollingResult && 'Ok' in isPollingResult && isPollingResult.Ok === true;
   const pollCount = pollCountResult && 'Ok' in pollCountResult ? pollCountResult.Ok : 0;
 
+  var filteredResult = [];
+  if (typeof getResult == "object" && 'Ok' in getResult) {
+    for (var i=0; i < getResult.Ok.length; i++) {
+      // cleanup String and convert to JSON object
+      var resultStr = getResult.Ok[i];
+      resultStr = resultStr.replace(/\\"/g, '"');
+      resultStr = resultStr.slice(1,-1);
+      resultStr = resultStr.replace('Some','');
+      resultStr = resultStr.replace(/[()]/g, '');
+      var result = JSON.parse(resultStr)
+
+      // if value > $100,000 (1000000000000) then display
+      if (result.value > 100000000000) {
+        // replace tx_hash with link to base explorer
+        result.tx_hash = "https://basescan.org/tx/" + result.tx_hash;
+        result.dollar_value = '$'+(Math.round(result.value * 100) / 100000000).toFixed(2);
+        filteredResult.push(result)
+        // console.log(result);
+      }
+    }
+  }
+ 
   return (
     <>
       <Link to="/">
         <button> Menu</button>
       </Link>
       <div className="card">
-        <p>Watch Base for latest USDC transfers. Pushing the start button will tell the canister to create a poller that gets executed every 10 seconds.</p>
+        <p>Watch Base for latest USDC transfers greater than $100,000. Pushing the start button will tell the canister to create a poller that gets executed every 10 seconds.</p>
 
         <p>
           {isPolling ?
-            `🟢 Watching for transfers, ${pollCount}/3`
+            `🟢 Watching for transfers, ${pollCount}/10`
             :
             "🔴 Not watching for transfers"
           }
@@ -80,13 +102,13 @@ function Page() {
         </button>
         {stopResult && (
           <pre>{JSON.stringify(stopResult, null, 2)}</pre>
-        )}
-
+        )}        
         <p>Fetched transfer logs, gets reset every time the start button is pushed.</p>
 
-        {getResult && (
-          <pre>{JSON.stringify(getResult, null, 2)}</pre>
+        {filteredResult && (
+          <pre>{JSON.stringify(filteredResult, null, 2)}</pre>
         )}
+
         <Source file="watch_usdc_transfer.rs" />
       </div >
     </>

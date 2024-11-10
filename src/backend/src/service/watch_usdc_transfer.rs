@@ -3,7 +3,7 @@ use std::{cell::RefCell, time::Duration};
 use crate::get_rpc_service_base;
 use alloy::{
     eips::BlockNumberOrTag,
-    primitives::address,
+    primitives::{address, FixedBytes},
     providers::{Provider, ProviderBuilder},
     rpc::types::{Filter, Log},
     sol,
@@ -12,7 +12,7 @@ use alloy::{
 };
 use ic_cdk_timers::TimerId;
 
-const POLL_LIMIT: usize = 3;
+const POLL_LIMIT: usize = 10;
 
 struct State {
     timer_id: Option<TimerId>,
@@ -69,6 +69,7 @@ async fn watch_usdc_transfer_start() -> Result<String, String> {
     let callback = |incoming_logs: Vec<Log>| {
         STATE.with_borrow_mut(|state| {
             for log in incoming_logs.iter() {
+                
                 let transfer: Log<USDC::Transfer> = log.log_decode().unwrap();
                 let USDC::Transfer { from, to, value } = transfer.data();
                 let from_fmt = format!(
@@ -81,9 +82,19 @@ async fn watch_usdc_transfer_start() -> Result<String, String> {
                     &to.to_string()[2..5],
                     &to.to_string()[to.to_string().len() - 3..]
                 );
+
+                /* 
                 state
                     .logs
                     .push(format!("{from_fmt} -> {to_fmt}, value: {value:?}"));
+                */
+
+                // get transaction hash
+                let tx_hash: Option<FixedBytes<32>> = log.transaction_hash;
+                // if > $1,000,000 then log
+                state
+                    .logs
+                    .push(format!("{{\"from\": \"{from}\", \"to\": \"{to}\", \"tx_hash\": \"{tx_hash:?}\", \"value\": {value:?}}}"));
             }
 
             state.poll_count += 1;

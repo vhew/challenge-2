@@ -18,17 +18,16 @@ function Root() {
           <img src={icLogo} className="logo" alt="React logo" />
         </a>
       </div>
-      <h1>Alloy + ICP</h1>
       <p>
-        This app is a toolkit to showcase examples on how to use{' '}
+        This app is forked from{' '}
         <a
-          href="https://github.com/alloy-rs/alloy"
+          href="https://github.com/ic-alloy/ic-alloy-toolkit"
           target="_blank"
           rel="noreferrer"
         >
-          Alloy
+          ic-alloy-toolkit.
         </a>{' '}
-        in ICP canisters to simplify interactions with Ethereum. It uses the{' '}
+        It is an ICP canister with simplified interactions with Ethereum. It uses the{' '}
         <a
           href="https://github.com/ic-alloy/ic-alloy"
           target="_blank"
@@ -40,30 +39,6 @@ function Root() {
       </p>
 
       <Outlet />
-
-      <div className="links">
-        <a
-          href="https://github.com/ic-alloy/ic-alloy-toolkit/graphs/contributors"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img src="https://img.shields.io/github/contributors/ic-alloy/ic-alloy-toolkit.svg?style=for-the-badge" />
-        </a>
-        <a
-          href="https://github.com/ic-alloy/ic-alloy-toolkit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img src="https://img.shields.io/github/license/ic-alloy/ic-alloy-toolkit.svg?style=for-the-badge" />
-        </a>
-        <a
-          href="https://github.com/ic-alloy/ic-alloy-toolkit/stargazers"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img src="https://img.shields.io/github/stars/ic-alloy/ic-alloy-toolkit?style=for-the-badge" />
-        </a>
-      </div>
     </main>
   );
 }
